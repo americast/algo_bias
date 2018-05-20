@@ -4,7 +4,7 @@ import numpy as np
 df = pd.read_csv("data/raw.csv")
 cols = df.columns.values
 
-req_cols =[cols[i] for i in (3,7,8,9,10,13,14,15,16,17,18,22)]
+req_cols =[cols[i] for i in (3,7,8,13,14,15,16)]
 
 for col in req_cols:
 	unique_rows = df[col].unique()
@@ -14,7 +14,7 @@ for col in req_cols:
 		i+=1
 		
 print(df)
-df.to_csv("out.csv")
+df.to_csv("data/out.csv")
 
 #Numeralise Agency_Text
 
