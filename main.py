@@ -42,12 +42,12 @@ def create_tensor(req):
 	print(to_drop)
 	req = req.drop(req.index[to_drop])
 	array_now = req.loc[:,["Agency_Text","Sex_Code_Text","Ethnic_Code_Text","Language","LegalStatus","CustodyStatus","MaritalStatus","Age"]].values
-	array_now = torch.transpose(torch.tensor(array_now), 0, 1)
+	array_now = torch.FloatTensor(array_now)
 	# print(array_now)
 	# print("rockstud")
 
 	result_now = req.loc[:,["RawScore"]].values
-	result_now =torch.transpose(torch.tensor(result_now), 0, 1)
+	result_now =torch.FloatTensor(result_now)
 	return array_now, result_now
 
 
@@ -68,7 +68,12 @@ for i in xrange((df.shape[0])/BATCH_SIZE):
 	# print(req)
 	final_tensor, result = create_tensor(req)
 	print(final_tensor,"\n", result)
-	print(":rockstud:")
+
+	hidden_tensor = torch.nn.Linear(8,4)(final_tensor)
+	out_tensor = torch.nn.Linear(4,1)(hidden_tensor)
+	loss = torch.nn.MSELoss()
+	output = loss(out_tensor, result)
+	output.backward()
 	# print(final_tensor[:,["DateOfBirth","Screening_Date"]])
 
 # print(df.shape[0])
