@@ -5,6 +5,7 @@ import sys
 
 BATCH_SIZE = 9
 ACCESS_PARAM = "Scale_ID"
+EPOCHS = 10
 
 count = 0
 
@@ -39,7 +40,7 @@ def create_tensor(req):
 		if not req.at[count,ACCESS_PARAM] == 7:
 			to_drop.append(i)
 		count+=1
-	print(to_drop)
+	# print(to_drop)
 	req = req.drop(req.index[to_drop])
 	array_now = req.loc[:,["Agency_Text","Sex_Code_Text","Ethnic_Code_Text","Language","LegalStatus","CustodyStatus","MaritalStatus","Age"]].values
 	array_now = torch.FloatTensor(array_now)
@@ -58,22 +59,32 @@ cols = np.array([3,7,8,9,10,13,14,15,16,17,18,20,22])
 cols += 1
 df = df[df.columns[cols]]
 
-for i in xrange((df.shape[0])/BATCH_SIZE):
-	curr = i * BATCH_SIZE
-	req = df.loc[curr:curr+BATCH_SIZE-1, :]
-	req["DateOfBirth"] = process_dob(req)["DateOfBirth"]
-	req["Screening_Date"] = process_sc(req)["Screening_Date"]
-	# print(req["Screening_Date"])
-	req = get_age(req)
-	# print(req)
-	final_tensor, result = create_tensor(req)
-	print(final_tensor,"\n", result)
 
-	hidden_tensor = torch.nn.Linear(8,4)(final_tensor)
-	out_tensor = torch.nn.Linear(4,1)(hidden_tensor)
-	loss = torch.nn.MSELoss()
-	output = loss(out_tensor, result)
-	output.backward()
-	# print(final_tensor[:,["DateOfBirth","Screening_Date"]])
+for j in xrange(EPOCHS):
+	losses=0
+	global count
+	count = 0
+	for i in xrange((df.shape[0])/BATCH_SIZE):
+		curr = i * BATCH_SIZE
+		req = df.loc[curr:curr+BATCH_SIZE-1, :]
+		req["DateOfBirth"] = process_dob(req)["DateOfBirth"]
+		req["Screening_Date"] = process_sc(req)["Screening_Date"]
+		# print(req["Screening_Date"])
+		req = get_age(req)
+		# print(req)
+		final_tensor, result = create_tensor(req)
+		# print(final_tensor,"\n", result)
 
-# print(df.shape[0])
+		hidden_tensor = torch.nn.Linear(8,4)(final_tensor)
+		out_tensor = torch.nn.Linear(4,1)(hidden_tensor)
+		loss = torch.nn.MSELoss()
+		output = loss(out_tensor, result)
+		output.backward()
+		# print("Loss: ", output.data[0])
+		losses+=output.data[0]
+		# print(final_tensor[:,["DateOfBirth","Screening_Date"]])
+		print(count)
+	losses/=count
+	print("Net loss: ", losses)
+
+	# print(df.shape[0])
