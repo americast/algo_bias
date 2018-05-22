@@ -44,11 +44,13 @@ def create_tensor(req):
 	req = req.drop(req.index[to_drop])
 	array_now = req.loc[:,["Agency_Text","Sex_Code_Text","Ethnic_Code_Text","Language","LegalStatus","CustodyStatus","MaritalStatus","Age"]].values
 	array_now = torch.FloatTensor(array_now)
+	array_now.cuda()
 	# print(array_now)
 	# print("rockstud")
 
 	result_now = req.loc[:,["RawScore"]].values
 	result_now =torch.FloatTensor(result_now)
+	result_now.cuda()
 	return array_now, result_now
 
 

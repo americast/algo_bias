@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 
 df = pd.read_csv("data/raw.csv")
+df = df[df.DisplayText != 'Risk of Failure to Appear']
+df = df[df.DisplayText != 'Risk of Recidivism']
 cols = df.columns.values
 
 req_cols =[cols[i] for i in (3,7,8,13,14,15,16)]
