@@ -34,8 +34,7 @@ class Net(torch.nn.Module):
         # x = F.relu(F.max_pool2d(self.conv1(x), 2))
         # x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
         # x = x.view(-1, 320)
-        x = torch.nn.functional.relu(self.dense1_bn(self.fc1(x)))
-        x = torch.nn.functional.dropout(x)
+        x = torch.nn.functional.dropout(torch.nn.functional.relu(self.fc1(x)))
         x = torch.nn.functional.relu(self.dense2_bn(self.fc2(x)))
         x = torch.nn.functional.dropout(x)
         x = torch.nn.functional.relu(self.dense3_bn(self.fc3(x)))
@@ -76,11 +75,6 @@ def create_tensor(req):
 
 
 # Read the data
-df = pd.read_csv("data/out-train.csv")
-
-cols = np.array([3,7,8,9,10,13,14,15,16,17,18,20,22])
-cols += 1
-df = df[df.columns[cols]]
 
 parser = argparse.ArgumentParser(description='Algo_bias')
 parser.add_argument('--batch-size', type=int, default=BATCH_SIZE, metavar='N',
@@ -105,19 +99,42 @@ choice = raw_input()
 
 if (choice=='y' or choice=='Y'):
 	path = raw_input("Enter path: ")
-	the_model.load_state_dict(torch.load(path))
+	model.load_state_dict(torch.load(path))
 
 print("\n")
 
-optimizer = torch.optim.Adam(model.parameters(), lr = 0.0001)
 
+train_flag = True
+
+print("Train? (y for train, n for test)")
+choice = raw_input()
+if (choice =='n' or choice=='N'):
+	df = pd.read_csv("data/out-test.csv")
+	BATCH_SIZE = 1
+	EPOCHS = 1
+	train_flag = False
+else:
+	df = pd.read_csv("data/out-train.csv")
+
+cols = np.array([3,7,8,9,10,13,14,15,16,17,18,20,22])
+cols += 1
+df = df[df.columns[cols]]
+
+if train_flag:
+	optimizer = torch.optim.Adam(model.parameters(), lr = 0.0001)
 for j in xrange(EPOCHS):
 	losses=0.0
 	global count
 	count = 0
 	for i in xrange(((df.shape[0])/BATCH_SIZE) +1):
+		if not train_flag:
+			if (count>=(df.shape[0])-1):
+				break 
 		curr = i * BATCH_SIZE
-		req = df.loc[curr:curr+BATCH_SIZE-1, :]
+		if train_flag:
+			req = df.loc[curr:curr+BATCH_SIZE-1, :]
+		else:
+			req = df.loc[curr:curr+BATCH_SIZE, :]
 		final_tensor, result = create_tensor(req)
 		# print(final_tensor,"\n", result)
 
@@ -126,8 +143,10 @@ for j in xrange(EPOCHS):
 		output = model(final_tensor)
 		loss = torch.nn.MSELoss()
 		loss_here = loss(output, result)
-		loss_here.backward()
-		optimizer.step()
+		# print(train_flag)
+		if train_flag:
+			loss_here.backward()
+			optimizer.step()
 		# print("Loss: ", loss_here.data[0])
 		losses+=loss_here.data[0]
 		# print(final_tensor[:,["DateOfBirth","Screening_Date"]])
@@ -136,9 +155,11 @@ for j in xrange(EPOCHS):
 			count=df.shape[0]
 		print("Batches done: "+str(count)+"/"+str(df.shape[0]),end="\r")
 	losses/=count
-	print("\nIteration "+str(j+1)+"/"+str(EPOCHS)+" done")
+	if train_flag:
+		print("\nIteration "+str(j+1)+"/"+str(EPOCHS)+" done")
 	print("\nLoss: "+ str(losses))
-	os.system("mkdir -p checkpoints")
-	torch.save(model.state_dict(), "checkpoints/"+str(j))
+	if train_flag:
+		os.system("mkdir -p checkpoints")
+		torch.save(model.state_dict(), "checkpoints/"+str(j))
 
 	# print(df.shape[0])
