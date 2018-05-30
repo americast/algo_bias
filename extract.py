@@ -27,8 +27,9 @@ def get_age(req):
 
 df = pd.read_csv("data/raw.csv")
 # print(df["RawScore"].max())
-df = df[df.DisplayText != 'Risk of Failure to Appear']
-df = df[df.DisplayText != 'Risk of Recidivism']
+# df = df[df.DisplayText != 'Risk of Failure to Appear']
+# df = df[df.DisplayText != 'Risk of Recidivism']
+# df = df[df.DisplayText != 'Risk of Violence']
 cols = df.columns.values
 
 req_cols =[cols[i] for i in (3,7,8,13,14,15,16)]
@@ -44,7 +45,15 @@ df["DateOfBirth"] = process_dob(df)["DateOfBirth"]
 df["Screening_Date"] = process_sc(df)["Screening_Date"]
 df = get_age(df)
 
-df["RawScore"] += np.abs(df["RawScore"].min() )+ 1.0
+lower_threshold = 4.0
+middle_threshold = 7.0
+
+df1 = (df["DecileScore"] > lower_threshold) * 1
+df2 = (df["DecileScore"] > middle_threshold) * 1 
+
+df_add = df1.add(df2, fill_value=0)
+
+df["DecileScore"] = df_add
 
 train, test = train_test_split(df, test_size=(1.0/6.0))
 
