@@ -7,17 +7,14 @@ import sys
 import os
 
 BATCH_SIZE = 8192
-ACCESS_PARAM = "Scale_ID"
 EPOCHS = 100000
-LEARNING_RATE = 0.01
-# SGD_MOMENTUM = 0.5
+LEARNING_RATE = 0.0001
 
 count = 0
 
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        # self.conv2_drop = nn.Dropout2d()
         self.fc1 = torch.nn.Linear(8, 16)
         self.dense1_bn = torch.nn.BatchNorm1d(16)
         self.fc2 = torch.nn.Linear(16, 32)
@@ -28,12 +25,10 @@ class Net(torch.nn.Module):
         self.dense4_bn = torch.nn.BatchNorm1d(16)
         self.fc5 = torch.nn.Linear(16, 8)
         self.dense5_bn = torch.nn.BatchNorm1d(8)
-        self.fc6 = torch.nn.Linear(8, 1)
+        self.fc6 = torch.nn.Linear(8, 3)
+        self.softmax = torch.nn.Softmax(dim=1)
 
     def forward(self, x):
-        # x = F.relu(F.max_pool2d(self.conv1(x), 2))
-        # x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
-        # x = x.view(-1, 320)
         x = torch.nn.functional.dropout(torch.nn.functional.relu(self.fc1(x)))
         x = torch.nn.functional.relu(self.dense2_bn(self.fc2(x)))
         x = torch.nn.functional.dropout(x)
@@ -43,11 +38,7 @@ class Net(torch.nn.Module):
         x = torch.nn.functional.dropout(x)
         x = torch.nn.functional.relu(self.dense5_bn(self.fc5(x)))
         x = torch.nn.functional.dropout(x)
-        x = torch.nn.functional.relu(self.fc6(x))
-        # x = F.dropout(x, training=self.training)
-        # loss = torch.nn.MSELoss()
-        # output = loss(out_tensor, result)
-        # return F.log_softmax(x, dim=1)
+        x = self.softmax(self.fc6(x))
         return x
 
 	# pass
@@ -55,21 +46,13 @@ class Net(torch.nn.Module):
 def create_tensor(req):
 	to_drop=[]
 	global count
-	# # print( req)
-	# for i in xrange(BATCH_SIZE):
-	# 	if not req.at[count,ACCESS_PARAM] == 7:
-	# 		to_drop.append(i)
-	# count+=1
-	# # print(to_drop)
-	# req = req.drop(req.index[to_drop])
 	array_now = req.loc[:,["Agency_Text","Sex_Code_Text","Ethnic_Code_Text","Language","LegalStatus","CustodyStatus","MaritalStatus","Age"]].values
 	array_now = torch.cuda.FloatTensor(array_now)
 	array_now.cuda()
-	# print(array_now)
-	# print("rockstud")
 
-	result_now = req.loc[:,["RawScore"]].values
-	result_now =torch.cuda.FloatTensor(result_now)
+	result_now = req["DecileScore"].values
+	# print("result_now: ", result_now)
+	result_now =torch.cuda.LongTensor(result_now)
 	result_now.cuda()
 	return array_now, result_now
 
@@ -110,22 +93,29 @@ print("Train? (y for train, n for test)")
 choice = raw_input()
 if (choice =='n' or choice=='N'):
 	df = pd.read_csv("data/out-test.csv")
-	BATCH_SIZE = 1
+	BATCH_SIZE = df.shape[0]
 	EPOCHS = 1
 	train_flag = False
+	model.eval()
+	
 else:
 	df = pd.read_csv("data/out-train.csv")
 
-cols = np.array([3,7,8,9,10,13,14,15,16,17,18,20,22])
-cols += 1
-df = df[df.columns[cols]]
+# cols = np.array([3,7,8,9,10,13,14,15,16,17,18,20,23,28])
+# cols += 1
+# df = df[df.columns[cols]]
+predicted = []
+correct = 0
 
 if train_flag:
-	optimizer = torch.optim.Adam(model.parameters(), lr = 0.0001)
+	criterion = torch.nn.CrossEntropyLoss()
+	optimizer = torch.optim.Adam(model.parameters(), lr = LEARNING_RATE)
+	# scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', factor = 0.01, patience = 1000, verbose = True)
 for j in xrange(EPOCHS):
 	losses=0.0
 	global count
 	count = 0
+	df = df.sample(frac=1).reset_index(drop=True)
 	for i in xrange(((df.shape[0])/BATCH_SIZE) +1):
 		if not train_flag:
 			if (count>=(df.shape[0])-1):
@@ -136,20 +126,21 @@ for j in xrange(EPOCHS):
 		else:
 			req = df.loc[curr:curr+BATCH_SIZE, :]
 		final_tensor, result = create_tensor(req)
-		# print(final_tensor,"\n", result)
-
-		# hidden_tensor = torch.nn.Linear(8,4)(final_tensor)
-		# out_tensor = torch.nn.Linear(4,1)(hidden_tensor)
-		output = model(final_tensor)
-		loss = torch.nn.MSELoss()
-		loss_here = loss(output, result)
-		# print(train_flag)
+		
 		if train_flag:
-			loss_here.backward()
+			optimizer.zero_grad()
+			output = model(final_tensor)
+			loss = criterion(output, result)
+			loss.backward()
 			optimizer.step()
-		# print("Loss: ", loss_here.data[0])
-		losses+=loss_here.data[0]
-		# print(final_tensor[:,["DateOfBirth","Screening_Date"]])
+			# scheduler.step(loss)
+
+			losses+=loss.data[0]
+		else:
+			output = model(final_tensor)
+			_,predicted = torch.max(output.data, 1)
+			correct += (predicted == result).sum().item()
+
 		count+=BATCH_SIZE
 		if count>df.shape[0]:
 			count=df.shape[0]
@@ -161,5 +152,5 @@ for j in xrange(EPOCHS):
 	if train_flag:
 		os.system("mkdir -p checkpoints")
 		torch.save(model.state_dict(), "checkpoints/"+str(j))
-
-	# print(df.shape[0])
+	if not train_flag:
+		print("Accuracy of the network on the 10000 test cases:" + str( 100 * correct / df.shape[0]))

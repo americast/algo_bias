@@ -55,6 +55,8 @@ df_add = df1.add(df2, fill_value=0)
 
 df["DecileScore"] = df_add
 
+df = df.drop(columns=['Person_ID', 'AssessmentID', 'Case_ID', 'LastName', 'FirstName', 'MiddleName', 'DateOfBirth', 'ScaleSet_ID', 'ScaleSet', 'AssessmentReason', 'Screening_Date', 'RecSupervisionLevel', 'RecSupervisionLevelText', 'Scale_ID', 'DisplayText', 'RawScore', 'ScoreText', 'AssessmentType', 'IsCompleted', 'IsDeleted'])
+
 train, test = train_test_split(df, test_size=(1.0/6.0))
 
 df.to_csv("data/out.csv")
