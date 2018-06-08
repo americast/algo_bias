@@ -29,16 +29,27 @@ class Net(torch.nn.Module):
         self.softmax = torch.nn.Softmax(dim=1)
 
     def forward(self, x):
-        x = torch.nn.functional.dropout(torch.nn.functional.relu(self.fc1(x)))
-        x = torch.nn.functional.relu(self.dense2_bn(self.fc2(x)))
+    	x = self.fc1(x)
+    	x = torch.nn.functional.relu(x)
         x = torch.nn.functional.dropout(x)
-        x = torch.nn.functional.relu(self.dense3_bn(self.fc3(x)))
+        x = self.fc2(x)
+        x = self.dense2_bn(x)
+        x = torch.nn.functional.relu(x)
         x = torch.nn.functional.dropout(x)
-        x = torch.nn.functional.relu(self.dense4_bn(self.fc4(x)))
+        x = self.fc3(x)
+        x = self.dense3_bn(x)
+        x = torch.nn.functional.relu(x)
         x = torch.nn.functional.dropout(x)
-        x = torch.nn.functional.relu(self.dense5_bn(self.fc5(x)))
+        x = self.fc4(x)
+        x = self.dense4_bn(x)
+        x = torch.nn.functional.relu(x)
         x = torch.nn.functional.dropout(x)
-        x = self.softmax(self.fc6(x))
+        x = self.fc5(x)
+        x = self.dense5_bn(x)
+        x = torch.nn.functional.relu(x)
+        x = torch.nn.functional.dropout(x)
+        x = self.fc6(x)
+        x = self.softmax(x)
         return x
 
 	# pass
@@ -96,7 +107,7 @@ if (choice =='n' or choice=='N'):
 	BATCH_SIZE = df.shape[0]
 	EPOCHS = 1
 	train_flag = False
-	model.eval()
+	model = model.eval()
 	
 else:
 	df = pd.read_csv("data/out-train.csv")

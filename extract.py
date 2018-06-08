@@ -38,7 +38,7 @@ for col in req_cols:
 	unique_rows = df[col].unique()
 	i = 1
 	for each_row in unique_rows:
-		df[col] = df[col] .replace([each_row], i)
+		df[col] = df[col] .replace([each_row], 10**(i-1))
 		i+=1
 		
 df["DateOfBirth"] = process_dob(df)["DateOfBirth"]
