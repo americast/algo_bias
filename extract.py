@@ -21,9 +21,7 @@ def process_dob(req):
 
 def get_age(req):
 	req["Age"]=req.loc[:,['Screening_Date']].sub(req['DateOfBirth'], axis=0)["Screening_Date"]
-	# print req["Age"]
 	return req
-	# pass
 
 df = pd.read_csv("data/raw.csv")
 # print(df["RawScore"].max())
@@ -32,18 +30,18 @@ df = pd.read_csv("data/raw.csv")
 # df = df[df.DisplayText != 'Risk of Violence']
 cols = df.columns.values
 
+df["DateOfBirth"] = process_dob(df)["DateOfBirth"]
+df["Screening_Date"] = process_sc(df)["Screening_Date"]
+df = get_age(df)
+
 req_cols =[cols[i] for i in (3,7,8,13,14,15,16)]
 
 for col in req_cols:
 	unique_rows = df[col].unique()
 	i = 1
 	for each_row in unique_rows:
-		df[col] = df[col] .replace([each_row], 10**(i-1))
+		df[col + str(i)] = (df[col] == each_row) *1
 		i+=1
-		
-df["DateOfBirth"] = process_dob(df)["DateOfBirth"]
-df["Screening_Date"] = process_sc(df)["Screening_Date"]
-df = get_age(df)
 
 lower_threshold = 4.0
 middle_threshold = 7.0
@@ -55,7 +53,7 @@ df_add = df1.add(df2, fill_value=0)
 
 df["DecileScore"] = df_add
 
-df = df.drop(columns=['Person_ID', 'AssessmentID', 'Case_ID', 'LastName', 'FirstName', 'MiddleName', 'DateOfBirth', 'ScaleSet_ID', 'ScaleSet', 'AssessmentReason', 'Screening_Date', 'RecSupervisionLevel', 'RecSupervisionLevelText', 'Scale_ID', 'DisplayText', 'RawScore', 'ScoreText', 'AssessmentType', 'IsCompleted', 'IsDeleted'])
+df = df.drop(columns=["Person_ID", "AssessmentID", "Case_ID", "Agency_Text", "LastName", "FirstName", "MiddleName", "Sex_Code_Text", "Ethnic_Code_Text", "DateOfBirth", "ScaleSet_ID", "ScaleSet", "AssessmentReason", "Language", "LegalStatus", "CustodyStatus", "MaritalStatus", "Screening_Date", "RecSupervisionLevel", "RecSupervisionLevelText", "Scale_ID", "DisplayText", "RawScore", "ScoreText", "AssessmentType", "IsCompleted", "IsDeleted"])
 
 train, test = train_test_split(df, test_size=(1.0/6.0))
 
