@@ -15,9 +15,9 @@ count = 0
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.fc1 = torch.nn.Linear(8, 16)
-        self.dense1_bn = torch.nn.BatchNorm1d(16)
-        self.fc2 = torch.nn.Linear(16, 32)
+        self.fc1 = torch.nn.Linear(38, 36)
+        self.dense1_bn = torch.nn.BatchNorm1d(36)
+        self.fc2 = torch.nn.Linear(36, 32)
         self.dense2_bn = torch.nn.BatchNorm1d(32)
         self.fc3 = torch.nn.Linear(32, 32)
         self.dense3_bn = torch.nn.BatchNorm1d(32)
@@ -57,7 +57,18 @@ class Net(torch.nn.Module):
 def create_tensor(req):
 	to_drop=[]
 	global count
-	array_now = req.loc[:,["Agency_Text","Sex_Code_Text","Ethnic_Code_Text","Language","LegalStatus","CustodyStatus","MaritalStatus","Age"]].values
+	array_now = req.loc[:,['Age', 'Agency_Text1', 'Agency_Text2',
+       'Agency_Text3', 'Agency_Text4', 'Sex_Code_Text1', 'Sex_Code_Text2',
+       'Ethnic_Code_Text1', 'Ethnic_Code_Text2', 'Ethnic_Code_Text3',
+       'Ethnic_Code_Text4', 'Ethnic_Code_Text5', 'Ethnic_Code_Text6',
+       'Ethnic_Code_Text7', 'Ethnic_Code_Text8', 'Ethnic_Code_Text9',
+       'Language1', 'Language2', 'LegalStatus1', 'LegalStatus2',
+       'LegalStatus3', 'LegalStatus4', 'LegalStatus5', 'LegalStatus6',
+       'LegalStatus7', 'CustodyStatus1', 'CustodyStatus2',
+       'CustodyStatus3', 'CustodyStatus4', 'CustodyStatus5',
+       'CustodyStatus6', 'MaritalStatus1', 'MaritalStatus2',
+       'MaritalStatus3', 'MaritalStatus4', 'MaritalStatus5',
+       'MaritalStatus6', 'MaritalStatus7']].values
 	array_now = torch.cuda.FloatTensor(array_now)
 	array_now.cuda()
 
