@@ -47,14 +47,14 @@ lower_threshold = 4.0
 middle_threshold = 7.0
 
 df1 = (df["DecileScore"] > lower_threshold) * 1
-df2 = (df["DecileScore"] > middle_threshold) * 1 
+# df2 = (df["DecileScore"] > middle_threshold) * 1 
 
-df_add = df1.add(df2, fill_value=0)
+# df_add = df1.add(df2, fill_value=0)
 
-df["DecileScore"] = df_add
+df["DecileScore"] = df1
 
 df = df.drop(columns=["Person_ID", "AssessmentID", "Case_ID", "Agency_Text", "LastName", "FirstName", "MiddleName", "Sex_Code_Text", "Ethnic_Code_Text", "DateOfBirth", "ScaleSet_ID", "ScaleSet", "AssessmentReason", "Language", "LegalStatus", "CustodyStatus", "MaritalStatus", "Screening_Date", "RecSupervisionLevel", "RecSupervisionLevelText", "Scale_ID", "DisplayText", "RawScore", "ScoreText", "AssessmentType", "IsCompleted", "IsDeleted"])
-
+df = df.drop(df[df['DecileScore'] == 0].sample(frac=0.5).index)
 train, test = train_test_split(df, test_size=(1.0/6.0))
 
 df.to_csv("data/out.csv")
@@ -64,3 +64,6 @@ test.to_csv("data/out-test.csv")
 print(train.shape)
 print(test.shape)
 print(df.shape)
+print(df["DecileScore"].value_counts())
+print(train["DecileScore"].value_counts())
+print(test["DecileScore"].value_counts())
