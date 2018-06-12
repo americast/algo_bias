@@ -21,32 +21,32 @@ model.add(Activation('selu'))
 model.add(Dense(64))
 model.add(BatchNormalization())
 model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Dropout(0.4))
 
 
 model.add(Dense(128))
 model.add(BatchNormalization())
 model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Dropout(0.4))
 
 model.add(Dense(64))
 model.add(BatchNormalization())
 model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Dropout(0.4))
 
 
 model.add(Dense(32))
 model.add(BatchNormalization())
 model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Dropout(0.4))
 
 
 model.add(Dense(8))
 model.add(BatchNormalization())
 model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Dropout(0.4))
 
-model.add(Dense(3))
+model.add(Dense(2))
 model.add(Activation('softmax'))
 print(model.summary())
 
@@ -96,7 +96,7 @@ model.compile(optimizer='adam',
 
 checkpointer = ModelCheckpoint(monitor='acc', filepath="checkpoints/model.h5", verbose=True,
                                    save_best_only = True)
-earlystopping = EarlyStopping(monitor='acc', min_delta=1e-6, patience=20, verbose=True)
+earlystopping = EarlyStopping(monitor='acc', min_delta=1e-6, patience=100, verbose=True)
 
 if train_flag:
 	model.fit(x_train, y_train,
