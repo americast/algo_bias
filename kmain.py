@@ -14,24 +14,28 @@ EPOCHS = 100000
 LEARNING_RATE = 0.0001
 
 model = Sequential()
-model.add(Dense(64, input_dim=38))
+model.add(Dense(64, input_dim=64))
 model.add(Activation('selu'))
 
 
 model.add(Dense(64))
 model.add(BatchNormalization())
-model.add(Activation('sigmoid'))
+model.add(Activation('selu'))
 # model.add(Dropout(0.4))
 
 
 model.add(Dense(128))
 model.add(BatchNormalization())
-model.add(Activation('sigmoid'))
+model.add(Activation('selu'))
 # model.add(Dropout(0.4))
+
+model.add(Dense(128))
+model.add(BatchNormalization())
+model.add(Activation('selu'))
 
 model.add(Dense(64))
 model.add(BatchNormalization())
-model.add(Activation('sigmoid'))
+model.add(Activation('selu'))
 # model.add(Dropout(0.4))
 
 
@@ -54,8 +58,8 @@ print("Would you like to restore a previously saved model? (y/n)")
 choice = raw_input()
 
 if (choice=='y' or choice=='Y'):
-	# path = raw_input("Enter path: ")
-	model = load_model('checkpoints/model.h5')
+	path = raw_input("Enter path: ")
+	model = load_model(path)
 
 print("\n")
 
@@ -74,20 +78,11 @@ else:
 	df = pd.read_csv("data/out-train.csv")
 
 
-x_train = df.loc[:,['Age', 'Agency_Text1', 'Agency_Text2',
-   'Agency_Text3', 'Agency_Text4', 'Sex_Code_Text1', 'Sex_Code_Text2',
-   'Ethnic_Code_Text1', 'Ethnic_Code_Text2', 'Ethnic_Code_Text3',
-   'Ethnic_Code_Text4', 'Ethnic_Code_Text5', 'Ethnic_Code_Text6',
-   'Ethnic_Code_Text7', 'Ethnic_Code_Text8', 'Ethnic_Code_Text9',
-   'Language1', 'Language2', 'LegalStatus1', 'LegalStatus2',
-   'LegalStatus3', 'LegalStatus4', 'LegalStatus5', 'LegalStatus6',
-   'LegalStatus7', 'CustodyStatus1', 'CustodyStatus2',
-   'CustodyStatus3', 'CustodyStatus4', 'CustodyStatus5',
-   'CustodyStatus6', 'MaritalStatus1', 'MaritalStatus2',
-   'MaritalStatus3', 'MaritalStatus4', 'MaritalStatus5',
-   'MaritalStatus6', 'MaritalStatus7']].values
+cols = df.columns.values
+cols = np.delete(cols,[1])
+x_train = df.loc[:,cols].values
 
-y_train = df["DecileScore"].values
+y_train = df["decile_score"].values
 # y_train = keras.utils.np_utils.to_categorical(y_train)
 
 model.compile(optimizer='adam',
