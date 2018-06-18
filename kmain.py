@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import sys
 import os
+import pudb
 
 BATCH_SIZE = 8192
 EPOCHS = 100000
@@ -107,5 +108,6 @@ else:
 	score = model.evaluate(x_train, y_train, batch_size=BATCH_SIZE)
 	print(model.metrics_names)
 	print(score)
+pu.db
 
 sys.exit(0)
