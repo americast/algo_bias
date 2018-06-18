@@ -14,24 +14,25 @@ EPOCHS = 100000
 LEARNING_RATE = 0.0001
 
 model = Sequential()
-model.add(Dense(64, input_dim=64))
+model.add(Dense(256, input_dim=167))
 model.add(Activation('selu'))
 
+
+model.add(Dense(256))
+model.add(BatchNormalization())
+model.add(Activation('selu'))
+# model.add(Dropout(0.4))
+
+
+model.add(Dense(128))
+model.add(BatchNormalization())
+model.add(Activation('selu'))
+# model.add(Dropout(0.4))
 
 model.add(Dense(64))
 model.add(BatchNormalization())
 model.add(Activation('selu'))
 # model.add(Dropout(0.4))
-
-
-model.add(Dense(128))
-model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
-
-model.add(Dense(128))
-model.add(BatchNormalization())
-model.add(Activation('selu'))
 
 model.add(Dense(64))
 model.add(BatchNormalization())
@@ -44,6 +45,11 @@ model.add(BatchNormalization())
 model.add(Activation('selu'))
 # model.add(Dropout(0.4))
 
+
+model.add(Dense(16))
+model.add(BatchNormalization())
+model.add(Activation('selu'))
+# model.add(Dropout(0.4))
 
 model.add(Dense(8))
 model.add(BatchNormalization())

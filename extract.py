@@ -6,7 +6,7 @@ df = pd.read_csv("data/people.csv")
 
 cols = df.columns.values
 
-req_cols =[cols[i] for i in (4,5,7,8,9,10,11,16,24,25)]
+req_cols =[cols[i] for i in (4,5,7,8,9,10,11,16,24)]
 
 for col in req_cols:
 	unique_rows = df[col].unique()
@@ -15,11 +15,11 @@ for col in req_cols:
 		df[col + str(i)] = (df[col] == each_row) * 1
 		i+=1
 
-# col = 'c_charge_desc'
-# i = 1
-# for each_row in df[col].unique():
-# 	df[col] = df[col] .replace([each_row], i)
-# 	i+=1
+col = cols[25]
+i = 1
+for each_row in df[col].unique():
+	df[col] = df[col] .replace([each_row], i)
+	i+=1
 
 lower_threshold = 4.0
 middle_threshold = 7.0
@@ -31,7 +31,7 @@ df1 = (df["decile_score"] > lower_threshold) * 1
 
 df["decile_score"] = df1
 
-cols = np.delete(cols,[13])
+cols = np.delete(cols,[13,25])
 
 df = df.drop(columns = cols)
 
