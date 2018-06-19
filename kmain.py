@@ -65,8 +65,8 @@ print("Would you like to restore a previously saved model? (y/n)")
 choice = raw_input()
 
 if (choice=='y' or choice=='Y'):
-	path = raw_input("Enter path: ")
-	model = load_model(path)
+	#path = raw_input("Enter path: ")
+	model = load_model("checkpoints/model.h5")
 
 print("\n")
 
@@ -106,6 +106,7 @@ if train_flag:
 	          batch_size=BATCH_SIZE, callbacks=[checkpointer, earlystopping])
 else:
 	score = model.evaluate(x_train, y_train, batch_size=BATCH_SIZE)
+	pred = model.predict(x_train, batch_size=BATCH_SIZE)
 	print(model.metrics_names)
 	print(score)
 pu.db
