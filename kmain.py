@@ -63,10 +63,10 @@ model.add(Activation('sigmoid'))
 print(model.summary())
 
 print("Would you like to restore a previously saved model? (y/n)")
-choice = raw_input()
+choice = input()
 
 if (choice=='y' or choice=='Y'):
-  #path = raw_input("Enter path: ")
+  #path = input("Enter path: ")
   model = load_model("checkpoints/model.h5")
 
 print("\n")
@@ -75,7 +75,7 @@ print("\n")
 train_flag = True
 
 print("Train? (y for train, n for test)")
-choice = raw_input()
+choice = input()
 if (choice =='n' or choice=='N'):
   df = pd.read_csv("data/out-test.csv")
   BATCH_SIZE = df.shape[0]
