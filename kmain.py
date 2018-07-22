@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import sys
 import os
+import innvestigate
 # import pudb
 
 BATCH_SIZE = 8192
@@ -127,6 +128,10 @@ else:
   print("Acc: "+str(acc_net))
   print(model.metrics_names)
   print(score)
+
+  analyzer = innvestigate.create_analyzer("gradient", model)
+  analysis = analyzer.analyze(x_train)
+  print("analysis: "+str(analysis))
   # pu.db
 
 
