@@ -16,13 +16,21 @@ def init_weights(shape):
     weights = tf.random_normal(shape, stddev=0.1)
     return tf.Variable(weights)
 
-def forwardprop(X, w_1, w_2):
+def forwardprop(X, w_1, w_2, w_3, w_4, w_5, w_6, w_7, w_8, w_9):
     """
     Forward-propagation.
     IMPORTANT: yhat is not softmax since TensorFlow's softmax_cross_entropy_with_logits() does that internally.
     """
-    h    = tf.nn.sigmoid(tf.matmul(X, w_1))  # The \sigma function
-    yhat = tf.matmul(h, w_2)  # The \varphi function
+    h_1 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(X, w_1)))  # The \sigma function
+    h_2 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_1, w_2)))  # The \sigma function
+    h_3 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_2, w_3)))  # The \sigma function
+    h_4 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_3, w_4)))  # The \sigma function
+    h_5 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_4, w_5)))  # The \sigma function
+    h_6 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_5, w_6)))  # The \sigma function
+    h_7 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_6, w_7)))  # The \sigma function
+    h_8 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_7, w_8)))  # The \sigma function
+    yhat = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_8, w_9)))  # The \sigma function
+    
     return yhat
 
 def get_iris_data():
@@ -42,6 +50,7 @@ def get_iris_data():
     return train_test_split(all_X, all_Y, test_size=0.33, random_state=RANDOM_SEED)
 
 def main():
+    global EPOCHS
     # train_X, test_X, train_y, test_y = get_iris_data()
 
     # Saver
@@ -76,7 +85,14 @@ def main():
     # exit()
     # Layer's sizes
     x_size = train_X.shape[1]   # Number of input nodes: 4 features and 1 bias
-    h_size = 256                                # Number of hidden nodes
+    h_size_1 = 256                                # Number of hidden nodes
+    h_size_2 = 256                                # Number of hidden nodes
+    h_size_3 = 128                                # Number of hidden nodes
+    h_size_4 = 64                                  # Number of hidden nodes
+    h_size_5 = 64                                  # Number of hidden nodes
+    h_size_6 = 32                                  # Number of hidden nodes
+    h_size_7 = 16                                  # Number of hidden nodes
+    h_size_8 = 8                                  # Number of hidden nodes
     y_size = train_y.shape[1]   # Number of outcomes (3 iris flowers)
 
     # Symbols
@@ -84,11 +100,18 @@ def main():
     y = tf.placeholder("float", shape=[None, y_size])
 
     # Weight initializations
-    w_1 = init_weights((x_size, h_size))
-    w_2 = init_weights((h_size, y_size))
+    w_1 = init_weights((x_size, h_size_1))
+    w_2 = init_weights((h_size_1, h_size_2))
+    w_3 = init_weights((h_size_2, h_size_3))
+    w_4 = init_weights((h_size_3, h_size_4))
+    w_5 = init_weights((h_size_4, h_size_5))
+    w_6 = init_weights((h_size_5, h_size_6))
+    w_7 = init_weights((h_size_6, h_size_7))
+    w_8 = init_weights((h_size_7, h_size_8))
+    w_9 = init_weights((h_size_8, y_size))
 
     # Forward propagation
-    yhat    = forwardprop(X, w_1, w_2)
+    yhat    = forwardprop(X, w_1, w_2, w_3, w_4, w_5, w_6, w_7, w_8, w_9)
     predict = tf.argmax(yhat, axis=1)
 
     # Backward propagation
