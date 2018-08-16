@@ -5,6 +5,8 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 import keras
 
+EPOCHS = 100
+
 RANDOM_SEED = 42
 tf.set_random_seed(RANDOM_SEED)
 
@@ -42,6 +44,9 @@ def get_iris_data():
 def main():
     # train_X, test_X, train_y, test_y = get_iris_data()
 
+    # Saver
+    name = ""
+
     print("Train? (y for train, n for test)")
     choice = raw_input()
     train_flag = True
@@ -50,13 +55,14 @@ def main():
           BATCH_SIZE = df.shape[0]
           EPOCHS = 1
           train_flag = False
-
+          name = raw_input("Enter model file name: ")
     else:
          df = pd.read_csv("data/out-train.csv")
 
 
+
     cols = df.columns.values
-    cols = np.delete(cols,[1])
+    cols = np.delete(cols, [1])
     train_X = df.loc[:,cols].values
 
     train_y = df["decile_score"].values
@@ -89,15 +95,21 @@ def main():
     cost    = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y, logits=yhat))
     updates = tf.train.GradientDescentOptimizer(0.01).minimize(cost)
 
+    saver = tf.train.Saver()
     # Run SGD
     sess = tf.Session()
-    init = tf.global_variables_initializer()
-    sess.run(init)
+    if not train_flag:
+        saver.restore(sess, "checkpoints/"+name)
 
-    for epoch in range(100):
+    if train_flag:
+        init = tf.global_variables_initializer()
+        sess.run(init)
+
+    for epoch in range(EPOCHS):
         # Train with each example
-        for i in range(len(train_X)):
-            sess.run(updates, feed_dict={X: train_X[i: i + 1], y: train_y[i: i + 1]})
+        if train_flag:
+            for i in range(len(train_X)):
+                sess.run(updates, feed_dict={X: train_X[i: i + 1], y: train_y[i: i + 1]})
 
         train_accuracy = np.mean(np.argmax(train_y, axis=1) ==
                                  sess.run(predict, feed_dict={X: train_X, y: train_y}))
@@ -106,6 +118,8 @@ def main():
 
         print("Epoch = %d, train accuracy = %.2f%%"
               % (epoch + 1, 100. * train_accuracy))
+        if train_flag:
+            saver.save(sess, "checkpoints/model_epoch_"+str(epoch)+".ckpt")
 
     sess.close()
 

@@ -10,7 +10,7 @@ import pandas as pd
 import sys
 import os
 import innvestigate
-# import pudb
+import pudb
 
 BATCH_SIZE = 8192
 EPOCHS = 100000
@@ -129,9 +129,10 @@ else:
   print(model.metrics_names)
   print(score)
 
-  analyzer = innvestigate.create_analyzer("gradient", model)
+  analyzer = innvestigate.create_analyzer("lrp.z", model)
   analysis = analyzer.analyze(x_train)
   print("analysis: "+str(analysis))
-  # pu.db
+  np.savetxt("out_now", analysis)
+  pu.db
 
 
