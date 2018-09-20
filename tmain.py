@@ -4,6 +4,7 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 import pandas as pd
 import keras
+import pudb
 
 EPOCHS = 100
 
@@ -21,15 +22,15 @@ def forwardprop(X, w_1, w_2, w_3, w_4, w_5, w_6, w_7, w_8, w_9):
     Forward-propagation.
     IMPORTANT: yhat is not softmax since TensorFlow's softmax_cross_entropy_with_logits() does that internally.
     """
-    h_1 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(X, w_1)))  # The \sigma function
-    h_2 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_1, w_2)))  # The \sigma function
-    h_3 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_2, w_3)))  # The \sigma function
-    h_4 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_3, w_4)))  # The \sigma function
-    h_5 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_4, w_5)))  # The \sigma function
-    h_6 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_5, w_6)))  # The \sigma function
-    h_7 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_6, w_7)))  # The \sigma function
-    h_8 = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_7, w_8)))  # The \sigma function
-    yhat = tf.nn.selu(tf.contrib.layers.batch_norm(tf.matmul(h_8, w_9)))  # The \sigma function
+    h_1 = tf.nn.selu((tf.matmul(X, w_1)))  # The \sigma function
+    h_2 = tf.nn.selu((tf.matmul(h_1, w_2)))  # The \sigma function
+    h_3 = tf.nn.selu((tf.matmul(h_2, w_3)))  # The \sigma function
+    h_4 = tf.nn.selu((tf.matmul(h_3, w_4)))  # The \sigma function
+    h_5 = tf.nn.selu((tf.matmul(h_4, w_5)))  # The \sigma function
+    h_6 = tf.nn.selu((tf.matmul(h_5, w_6)))  # The \sigma function
+    h_7 = tf.nn.selu((tf.matmul(h_6, w_7)))  # The \sigma function
+    h_8 = tf.nn.selu((tf.matmul(h_7, w_8)))  # The \sigma function
+    yhat = tf.nn.selu((tf.matmul(h_8, w_9)))  # The \sigma function
     
     return yhat
 
@@ -135,10 +136,10 @@ def main():
                 sess.run(updates, feed_dict={X: train_X[i: i + 1], y: train_y[i: i + 1]})
 
         train_accuracy = np.mean(np.argmax(train_y, axis=1) ==
-                                 sess.run(predict, feed_dict={X: train_X, y: train_y}))
+                                 tf.run(feed_dict={X: train_X}))
         # test_accuracy  = np.mean(np.argmax(test_y, axis=1) ==
         #                          sess.run(predict, feed_dict={X: test_X, y: test_y}))
-
+        pu.db
         print("Epoch = %d, train accuracy = %.2f%%"
               % (epoch + 1, 100. * train_accuracy))
         if train_flag:
