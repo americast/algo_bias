@@ -91,7 +91,7 @@ def categorical_accuracy_mod(y_true, y_pred):
   return len(y_true[here])/float(len(y_true))
 
 cols = df.columns.values
-cols = np.delete(cols,[1])
+cols = np.delete(cols,[0])
 x_train = df.loc[:,cols].values
 
 y_train = df["decile_score"].values
