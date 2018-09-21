@@ -1,6 +1,6 @@
 from __future__ import print_function
 import keras
-from keras.models import Sequential, load_model
+from keras.models import Sequential, load_model, Model
 from keras.layers import *
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 import keras.backend as K
@@ -131,8 +131,108 @@ else:
 
   analyzer = innvestigate.create_analyzer("lrp.z", model)
   analysis = analyzer.analyze(x_train)
+  print("analysis: "+str(analysis)+"\n\n\n")
+
+  model.summary()
+
+  print("New model 1")
+  
+  new_model_1 = Model(model.inputs, model.layers[-3].output)
+  new_model_1.set_weights(model.get_weights())
+  new_model_1.summary()
+
+  analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
+  analysis = analyzer.analyze(x_train)
   print("analysis: "+str(analysis))
-  np.savetxt("out_now", analysis)
-  pu.db
+  np.save("out_8_lrp", analysis)
+
+
+
+  print("New model 2")
+  
+  new_model_1 = Model(model.inputs, model.layers[-3].output)
+  new_model_1.set_weights(model.get_weights())
+  new_model_1.summary()
+
+  analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
+  analysis = analyzer.analyze(x_train)
+  print("analysis: "+str(analysis))
+  np.save("out_7_lrp", analysis)
+
+  print("New model 3")
+  
+  new_model_1 = Model(model.inputs, model.layers[-6].output)
+  new_model_1.set_weights(model.get_weights())
+  new_model_1.summary()
+
+  analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
+  analysis = analyzer.analyze(x_train)
+  print("analysis: "+str(analysis))
+  np.save("out_6_lrp", analysis)
+
+  print("New model 4")
+  
+  new_model_1 = Model(model.inputs, model.layers[-9].output)
+  new_model_1.set_weights(model.get_weights())
+  new_model_1.summary()
+
+  analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
+  analysis = analyzer.analyze(x_train)
+  print("analysis: "+str(analysis))
+  np.save("out_5_lrp", analysis)
+
+  print("New model 5")
+  
+  new_model_1 = Model(model.inputs, model.layers[-15].output)
+  new_model_1.set_weights(model.get_weights())
+  new_model_1.summary()
+
+  analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
+  analysis = analyzer.analyze(x_train)
+  print("analysis: "+str(analysis))
+  np.save("out_4_lrp", analysis)
+
+  print("New model 6")
+  
+  new_model_1 = Model(model.inputs, model.layers[-18].output)
+  new_model_1.set_weights(model.get_weights())
+  new_model_1.summary()
+
+  analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
+  analysis = analyzer.analyze(x_train)
+  print("analysis: "+str(analysis))
+  np.save("out_3_lrp", analysis)
+
+  
+  print("New model 7")
+  
+  new_model_1 = Model(model.inputs, model.layers[-21].output)
+  new_model_1.set_weights(model.get_weights())
+  new_model_1.summary()
+
+  analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
+  analysis = analyzer.analyze(x_train)
+  print("analysis: "+str(analysis))
+
+  np.save("out_2_lrp", analysis)
+
+  print("New model 8")
+  
+  new_model_1 = Model(model.inputs, model.layers[-24].output)
+  new_model_1.set_weights(model.get_weights())
+  new_model_1.summary()
+
+  analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
+  analysis = analyzer.analyze(x_train)
+  print("analysis: "+str(analysis))
+
+  np.save("out_1_lrp", analysis)
+
+  
+
+  
+    
+
+  # pu.db
 
 

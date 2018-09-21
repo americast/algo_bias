@@ -1,3 +1,4 @@
 checkpoints/
 checkpoints2/
 .*
+*.npy
