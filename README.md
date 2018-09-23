@@ -1,4 +1,4 @@
-# Algorithmic Bias
+# WIP: Algorithmic Bias
 An attempt to mimic the black box of COMPAS :wink:
 
 Next, we generate heatmaps.
