@@ -17,7 +17,7 @@ EPOCHS = 100000
 LEARNING_RATE = 0.0001
 
 model = Sequential()
-model.add(Dense(256, input_dim=166))
+model.add(Dense(256, input_dim=108))
 model.add(Activation('selu'))
 
 
@@ -59,7 +59,7 @@ model.add(BatchNormalization())
 model.add(Activation('selu'))
 # model.add(Dropout(0.4))
 
-model.add(Dense(3))
+model.add(Dense(2))
 model.add(Activation('sigmoid'))
 print(model.summary())
 
@@ -78,25 +78,29 @@ train_flag = True
 print("Train? (y for train, n for test)")
 choice = input()
 if (choice =='n' or choice=='N'):
-  df = pd.read_csv("data/out-test.csv")
+  df = pd.read_csv("adult/adult_test.csv")
   BATCH_SIZE = df.shape[0]
   EPOCHS = 1
   train_flag = False
   
 else:
-  df = pd.read_csv("data/out-train.csv")
+  df = pd.read_csv("adult/adult_train.csv")
 
 def categorical_accuracy_mod(y_true, y_pred):
   here = np.equal(y_true, y_pred)
   return len(y_true[here])/float(len(y_true))
 
 cols = df.columns.values
-cols = np.delete(cols,[0])
+last_index = (np.sum(cols.shape)-1) 
+cols = np.delete(cols,last_index)
 x_train = df.loc[:,cols].values
+print("ujr cyvktkvkyyrvkdyftd: "+str(x_train.shape))
 
-y_train = df["decile_score"].values
+y_train = df["income"].values
 y_train_ = y_train
 y_train = keras.utils.np_utils.to_categorical(y_train)
+# if not train_flag:
+#   y_train = np.repeat([[1,0]], y_train.shape[0], axis = 0)
 
 model.compile(optimizer='adam',
               loss='categorical_crossentropy',
@@ -112,8 +116,10 @@ if train_flag:
             epochs=EPOCHS,
             batch_size=BATCH_SIZE, callbacks=[checkpointer, earlystopping])
 else:
-  score = model.evaluate(x_train, y_train, batch_size=BATCH_SIZE)
   pred = model.predict(x_train, batch_size=BATCH_SIZE)
+  print("pred.shape: ", pred.shape)
+  print("y_train.shape: ", y_train.shape)
+  score = model.evaluate(x_train, y_train, batch_size=BATCH_SIZE)
   pred_ = np.argmax(pred, axis = -1)
   print("Hello!: "+str(pred.shape))
   print("Hello!: "+str(pred_.shape))

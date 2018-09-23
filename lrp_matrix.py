@@ -28,4 +28,4 @@ for x in range(1,9):
 
 np.save("lrp_matrix", g)
 df = pd.DataFrame(g)
-df.to_csv("lrp_matrix.csv", index=False)	
+df.to_csv("lrp_matrix.csv", index=False)
