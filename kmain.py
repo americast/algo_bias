@@ -94,7 +94,7 @@ cols = df.columns.values
 last_index = (np.sum(cols.shape)-1) 
 cols = np.delete(cols,last_index)
 x_train = df.loc[:,cols].values
-print("ujr cyvktkvkyyrvkdyftd: "+str(x_train.shape))
+print("x_train.shape: "+str(x_train.shape))
 
 y_train = df["income"].values
 y_train_ = y_train
@@ -121,8 +121,6 @@ else:
   print("y_train.shape: ", y_train.shape)
   score = model.evaluate(x_train, y_train, batch_size=BATCH_SIZE)
   pred_ = np.argmax(pred, axis = -1)
-  print("Hello!: "+str(pred.shape))
-  print("Hello!: "+str(pred_.shape))
   unique, counts = np.unique(pred_, return_counts=True)
   print(dict(zip(unique, counts)))
   unique, counts = np.unique(y_train_, return_counts=True)
