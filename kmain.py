@@ -82,7 +82,7 @@ choice = input()
 
 if (choice=='y' or choice=='Y'):
   #path = input("Enter path: ")
-  model = load_model("checkpoints/best_model14.h5")
+  model = load_model("checkpoints/best_model.h5")
 
 print("\n")
 
@@ -120,7 +120,7 @@ model.compile(optimizer='adam',
               loss='categorical_crossentropy',
               metrics=["categorical_accuracy"])
 
-checkpointer = ModelCheckpoint(monitor="categorical_accuracy", filepath="checkpoints/model.h5", verbose=True,
+checkpointer = ModelCheckpoint(monitor="categorical_accuracy", filepath="checkpoints/best_model.h5", verbose=True,
                                    save_best_only = True)
 earlystopping = EarlyStopping(monitor="categorical_accuracy", min_delta=1e-6, patience=20, verbose=True)
 
