@@ -13,62 +13,76 @@ import innvestigate
 import pudb
 
 BATCH_SIZE = 8192
-EPOCHS = 100000
+EPOCHS = 10000
 LEARNING_RATE = 0.0001
 
 model = Sequential()
-model.add(Dense(256, input_dim=108))
-model.add(Activation('selu'))
+model.add(Dense(512, input_dim=108))
+model.add(Activation('relu'))
 
+model.add(Dense(512))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
+model.add(Dropout(0.4))
 
 model.add(Dense(256))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.4))
 
+model.add(Dense(256))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
+model.add(Dropout(0.4))
 
 model.add(Dense(128))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
+
+model.add(Dense(128))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
 
 model.add(Dense(64))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
 
 model.add(Dense(64))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
 
 
-model.add(Dense(32))
+model.add(Dense(64))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
 
 
-model.add(Dense(16))
+model.add(Dense(64))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
 
 model.add(Dense(8))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
 
 model.add(Dense(2))
 model.add(Activation('sigmoid'))
 print(model.summary())
+
 
 print("Would you like to restore a previously saved model? (y/n)")
 choice = input()
 
 if (choice=='y' or choice=='Y'):
   #path = input("Enter path: ")
-  model = load_model("checkpoints/model.h5")
+  model = load_model("checkpoints/best_model14.h5")
 
 print("\n")
 
