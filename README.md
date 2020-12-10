@@ -18,7 +18,7 @@ The Keras variant of this code is used to generate heatmap as PyTorch and Tensor
 
 Next, we ask user for the choice to load previous saved model. Depending on which we load the model or train from beginning. We then ask user the choice to train or test. Depending on the selection, we load a csv file containing data to train or test. We then seperate attributes with target values, namely x_train and y_train. We then compile the model using Adam optimizer and Categorical Crossentropy as loss function. We use Keras' checkpoints to define early stopping (for training) if accuracy does not improve after certain epochs. Then depending on the user choice we train or test the model. If we train the model, then the best performing weights are saved to use them to load the model next time. 
 
-If the user chose to test, we print the model accuracy on the test data. Next we do LRP, Layer-wise Relevance Propagation is a method for understanding deep neural networks by running a backward pass to observe how the individual layers of the program work. This technique brings brings explainability to Deep Neural Networks. More information on LRP is given [here](https://link.springer.com/chapter/10.1007/978-3-030-28954-6_10).
+If the user chose to test, we print the model accuracy on the test data. Next, we do LRP (Layer-wise Relevance Propagation) which is a method for understanding deep neural networks by running a backward pass to observe how the individual layers of the program work. This technique brings brings explainability to Deep Neural Networks. More information on LRP is given [here](https://link.springer.com/chapter/10.1007/978-3-030-28954-6_10).
 <p align="center">
 
 <img  src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.explicit.bing.net%2Fth%3Fid%3DOIP.aIb4BsF7bqBOry4IZaszgAHaEG%26pid%3DApi&f=1">
@@ -39,7 +39,7 @@ analyzer = innvestigate.create_analyzer("lrp.z", model)
 # then we pass model inputs, that is x_train
 analysis = analyzer.analyze(x_train)
 ```
-Then we perform the layer wise layer analysis by blocking off the layers and then performing analysis on them. 
+Then we perform the layer wise analysis by blocking off the layers and then performing analysis on them. 
 
 ```python
 # Here we cutoff the layers and define a new model. This will remove the last Dense layer.
