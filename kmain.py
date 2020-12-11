@@ -13,54 +13,67 @@ import innvestigate
 import pudb
 
 BATCH_SIZE = 8192
-EPOCHS = 100000
+EPOCHS = 10000
 LEARNING_RATE = 0.0001
 
 model = Sequential()
-model.add(Dense(256, input_dim=108))
-model.add(Activation('selu'))
+model.add(Dense(512, input_dim=108))
+model.add(Activation('relu'))
 
+model.add(Dense(512))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
+model.add(Dropout(0.4))
 
 model.add(Dense(256))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.4))
 
+model.add(Dense(256))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
+model.add(Dropout(0.4))
 
 model.add(Dense(128))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
+
+model.add(Dense(128))
+model.add(BatchNormalization())
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
 
 model.add(Dense(64))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
 
 model.add(Dense(64))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
 
 
-model.add(Dense(32))
+model.add(Dense(64))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
 
-
-model.add(Dense(16))
+model.add(Dense(64))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
 
 model.add(Dense(8))
 model.add(BatchNormalization())
-model.add(Activation('selu'))
-# model.add(Dropout(0.4))
+model.add(Activation('relu'))
+model.add(Dropout(0.3))
 
 model.add(Dense(2))
 model.add(Activation('sigmoid'))
+
 print(model.summary())
 
 print("Would you like to restore a previously saved model? (y/n)")
@@ -68,7 +81,7 @@ choice = input()
 
 if (choice=='y' or choice=='Y'):
   #path = input("Enter path: ")
-  model = load_model("checkpoints/model.h5")
+  model = load_model("checkpoints/best_model13.h5")
 
 print("\n")
 
@@ -106,7 +119,7 @@ model.compile(optimizer='adam',
               loss='categorical_crossentropy',
               metrics=["categorical_accuracy"])
 
-checkpointer = ModelCheckpoint(monitor="categorical_accuracy", filepath="checkpoints/model.h5", verbose=True,
+checkpointer = ModelCheckpoint(monitor="categorical_accuracy", filepath="checkpoints/best_model13.h5", verbose=True,
                                    save_best_only = True)
 earlystopping = EarlyStopping(monitor="categorical_accuracy", min_delta=1e-6, patience=20, verbose=True)
 
@@ -148,22 +161,11 @@ else:
   analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
   analysis = analyzer.analyze(x_train)
   print("analysis: "+str(analysis))
-  np.save("out_8_lrp", analysis)
+  np.save("out_10_lrp", analysis)
 
 
 
   print("New model 2")
-  
-  new_model_1 = Model(model.inputs, model.layers[-3].output)
-  new_model_1.set_weights(model.get_weights())
-  new_model_1.summary()
-
-  analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
-  analysis = analyzer.analyze(x_train)
-  print("analysis: "+str(analysis))
-  np.save("out_7_lrp", analysis)
-
-  print("New model 3")
   
   new_model_1 = Model(model.inputs, model.layers[-6].output)
   new_model_1.set_weights(model.get_weights())
@@ -172,9 +174,9 @@ else:
   analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
   analysis = analyzer.analyze(x_train)
   print("analysis: "+str(analysis))
-  np.save("out_6_lrp", analysis)
+  np.save("out_9_lrp", analysis)
 
-  print("New model 4")
+  print("New model 3")
   
   new_model_1 = Model(model.inputs, model.layers[-9].output)
   new_model_1.set_weights(model.get_weights())
@@ -183,7 +185,18 @@ else:
   analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
   analysis = analyzer.analyze(x_train)
   print("analysis: "+str(analysis))
-  np.save("out_5_lrp", analysis)
+  np.save("out_8_lrp", analysis)
+
+  print("New model 4")
+  
+  new_model_1 = Model(model.inputs, model.layers[-12].output)
+  new_model_1.set_weights(model.get_weights())
+  new_model_1.summary()
+
+  analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
+  analysis = analyzer.analyze(x_train)
+  print("analysis: "+str(analysis))
+  np.save("out_7_lrp", analysis)
 
   print("New model 5")
   
@@ -194,7 +207,7 @@ else:
   analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
   analysis = analyzer.analyze(x_train)
   print("analysis: "+str(analysis))
-  np.save("out_4_lrp", analysis)
+  np.save("out_6_lrp", analysis)
 
   print("New model 6")
   
@@ -205,7 +218,7 @@ else:
   analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
   analysis = analyzer.analyze(x_train)
   print("analysis: "+str(analysis))
-  np.save("out_3_lrp", analysis)
+  np.save("out_5_lrp", analysis)
 
   
   print("New model 7")
@@ -218,11 +231,35 @@ else:
   analysis = analyzer.analyze(x_train)
   print("analysis: "+str(analysis))
 
-  np.save("out_2_lrp", analysis)
+  np.save("out_4_lrp", analysis)
 
   print("New model 8")
   
   new_model_1 = Model(model.inputs, model.layers[-24].output)
+  new_model_1.set_weights(model.get_weights())
+  new_model_1.summary()
+
+  analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
+  analysis = analyzer.analyze(x_train)
+  print("analysis: "+str(analysis))
+
+  np.save("out_3_lrp", analysis)
+
+  print("New model 9")
+  
+  new_model_1 = Model(model.inputs, model.layers[-27].output)
+  new_model_1.set_weights(model.get_weights())
+  new_model_1.summary()
+
+  analyzer = innvestigate.create_analyzer("lrp.z", new_model_1)
+  analysis = analyzer.analyze(x_train)
+  print("analysis: "+str(analysis))
+
+  np.save("out_2_lrp", analysis)
+
+  print("New model 10")
+  
+  new_model_1 = Model(model.inputs, model.layers[-30].output)
   new_model_1.set_weights(model.get_weights())
   new_model_1.summary()
 
@@ -238,5 +275,3 @@ else:
     
 
   # pu.db
-
-
