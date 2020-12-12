@@ -20,11 +20,25 @@ LEARNING_RATE = 0.0001
 
 
 def categorical_accuracy_mod(y_true, y_pred):
+  """ Calculates accuracy on test set.
+
+  Args: 
+      y_true: Ground truth values of test data.
+      y_pred: Values predicted by the Model.
+
+  Returns:
+         Accuracy of the model.
+  """
   here = np.equal(y_true, y_pred)
   return len(y_true[here])/float(len(y_true))
 
 
 def train_test():
+  """Lets user decide to train or test.
+
+  Returns:
+         True if user chose Train and False for test.
+  """
   print("Would you like to train or test? (y for train, n for test): ")
   choice = input()
   if (choice=='y' or choice=='Y'):
@@ -36,6 +50,13 @@ def train_test():
 
 
 def load_csv(train_flag):
+  """Loads data from csv file.
+  Args:
+      train_flag: Boolean value, True if user chose to train and False 
+          if they chose to test.
+
+  Returns: Pandas Dataframe of the csv file.
+  """
   if train_flag:
     df = pd.read_csv("adult/adult_train.csv")
   else:
@@ -47,6 +68,15 @@ def load_csv(train_flag):
     
 
 def layer_analysis(model):
+  """Implements Layer-wise relevance propagation.
+
+  This is cutting off layers in the network to obtain heatmap 
+  vectors for every layer and then merges them together to form
+  a heatmap matrix/tensor. Then saves them using numpy.
+
+  Args:
+      model: The neural network to perform analysis upon.
+  """
 
   analyzer = innvestigate.create_analyzer("lrp.z", model)
   analysis = analyzer.analyze(x_train)
@@ -167,7 +197,7 @@ if train_flag:
             epochs=EPOCHS,
             batch_size=BATCH_SIZE, callbacks=[checkpointer, earlystopping])
 else:
-  
+
   pred = model.predict(x_train, batch_size=BATCH_SIZE)
   print("pred.shape: ", pred.shape)
   print("y_train.shape: ", y_train.shape)
