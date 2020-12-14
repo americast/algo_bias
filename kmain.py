@@ -77,17 +77,17 @@ def layer_analysis(model):
   Args:
       model: The neural network to perform analysis upon.
   """
+  layer_num = [2,6,10,14,18,22,26,30,34,38,42, 44]
 
   analyzer = innvestigate.create_analyzer("lrp.z", model)
   analysis = analyzer.analyze(x_train)
   print("analysis: "+str(analysis)+"\n\n\n")
 
   model.summary()
-
-  for i in range(8):
+  for i in layer_num:
     print("New model ", i)
   
-    new_model = Model(model.inputs, model.layers[-3*i].output)
+    new_model = Model(model.inputs, model.layers[-i].output)
     new_model.set_weights(model.get_weights())
     new_model.summary()
 
@@ -168,7 +168,7 @@ df = load_csv(train_flag)
 print("Would you like to load previous saved model (y/n): ")
 model_choice = input()
 if (model_choice=='y' or model_choice=='Y'):
-  model = load_model("model.h5")
+  model = load_model("checkpoints/best_model.h5")
 
 
 cols = df.columns.values
@@ -209,16 +209,11 @@ else:
   print(dict(zip(unique, counts)))
 
   acc_net = categorical_accuracy_mod(y_train_, pred_)
-
+ 
   print("Acc: "+str(acc_net))
   print(model.metrics_names)
   print(score)
 
-  analyzer = innvestigate.create_analyzer("lrp.z", model)
-  analysis = analyzer.analyze(x_train)
-  print("analysis: "+str(analysis)+"\n\n\n")
-
-  model.summary()
-  
   layer_analysis(model)
 
+  
