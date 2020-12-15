@@ -95,6 +95,6 @@ python plot.py
 
 Please make sure you run `kmain.py` in inference mode by answering the questions prompted accordingly.
 
-## Sample heatmap
-
-![](pic_1.png)
+## Heatmap
+<div align="center">
+<img src="https://raw.githubusercontent.com/thevoxium/algo_bias/sec_branch/finalMap.gif" alt="finalMap.gif" border="0" width=200 height=150>
