@@ -67,7 +67,7 @@ def load_csv(train_flag):
   return df
     
 
-def layer_analysis(model):
+def layer_analysis(model, layer_num):
   """Implements Layer-wise relevance propagation.
 
   This is cutting off layers in the network to obtain heatmap 
@@ -76,9 +76,8 @@ def layer_analysis(model):
 
   Args:
       model: The neural network to perform analysis upon.
+      layer_num: A list, with index of layers to cuttoff for LRP.
   """
-  layer_num = [2,6,10,14,18,22,26,30,34,38,42, 44]
-
   analyzer = innvestigate.create_analyzer("lrp.z", model)
   analysis = analyzer.analyze(x_train)
   print("analysis: "+str(analysis)+"\n\n\n")
@@ -209,11 +208,12 @@ else:
   print(dict(zip(unique, counts)))
 
   acc_net = categorical_accuracy_mod(y_train_, pred_)
- 
   print("Acc: "+str(acc_net))
   print(model.metrics_names)
   print(score)
 
-  layer_analysis(model)
+  layer_num = [2,6,10,14,18,22,26,30,34,38,42, 44]
+
+  layer_analysis(model, layer_num)
 
   
